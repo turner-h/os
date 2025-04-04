@@ -1,13 +1,68 @@
 [bits 16]
 [org 0x7c00]
 
+KERNEL_OFFSET equ 0x1000
+
+mov [BOOT_DRIVE], dl
+
 mov bp, 0x9000  ; init stack
 mov bp, sp
 
-; load kernel into RAM
+call load_kernel
 call switch_to_protected_mode
 
 jmp $
+
+load_kernel:
+    mov bx, KERNEL_OFFSET   ; kernel address
+    mov dh, 1               ; # of sectors to read
+    mov dl, [BOOT_DRIVE]    ; drive to load from
+    call disk_load
+    ret
+
+disk_load:
+    pusha
+    push dx
+
+    mov ah, 0x02    ; set int 13h to 'read'
+    mov al, dh      ; number of sectors to read
+    mov cl, 0x02    ; sector to read, 0x01 is the boot sector
+    mov ch, 0       ; cylinder
+
+    ; dl is the drive number
+    mov dh, 0       ; head
+
+    int 0x13
+    jc disk_error
+
+    pop dx
+    cmp al, dh      ; al is set ot the # of sectors read
+    jne disk_error
+    popa
+    ret
+
+disk_error:
+    mov bx, DRIVE_ERROR
+    call print_rm
+    jmp $
+
+print_rm:
+    pusha
+
+print_rm_start:
+    mov al, [bx]    ; bx is string address
+    cmp al, 0
+    je print_rm_end
+
+    mov ah, 0x0e
+    int 0x10
+
+    add bx, 1
+    jmp print_rm_start
+
+print_rm_end:
+    popa
+    ret
 
 switch_to_protected_mode:
     cli                     ; clear interrupta
@@ -29,14 +84,15 @@ init_pm:
     mov ebp, 0x90000    ; set up 32-bit stack
     mov esp, ebp
 
-    mov ebx, pm_message
+    mov ebx, PM_MESSAGE
     call print
 
-jmp $   ; loop infinitely
+    call KERNEL_OFFSET  ; jump to C
+    jmp $               ; loop infinitely if kernel returns
 
-pm_message:
-    db "loaded in protected mode", 0
-
+BOOT_DRIVE db 0
+DRIVE_ERROR db "failed to load from drive", 0
+PM_MESSAGE db "loaded in protected mode", 0
 VIDEO_MEMORY equ 0xb8000    ; location of vga buffer
 WHITE_ON_BLACK equ 0x0f     ; color scheme
 
