@@ -1,12 +1,14 @@
 #include "vga.h"
+#include "isr.h"
+//#include "util.h"
 
 void main() {
     clear_screen();
+    install_isrs();
 
-    for (int i = 0; i < 28; i++) {
-        for (int j = 0; j < i; j++) {
-            kprint("x");
-        }
-        kprint("\n");
-    }
+    
+    asm volatile("int $1");
+    asm volatile("int $2");
+    asm volatile("int $3");
+    
 }

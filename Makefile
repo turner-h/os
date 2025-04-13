@@ -4,7 +4,11 @@ LD= i386-elf-ld
 C_SOURCES= $(wildcard src/*.c)
 HEADERS= $(wildcard src/*.h)
 
-OBJS= ${C_SOURCES:.c=.o}
+BOOT_SOURCES= src/boot.asm src/start.asm
+
+ASM_SOURCES= ${filter-out ${BOOT_SOURCES}, ${wildcard src/*.asm}}
+
+OBJS= ${C_SOURCES:.c=.o} ${ASM_SOURCES:.asm=.o}
 BUILD_DIR= bin
 
 C_FLAGS= -m32 -nostdlib -nostdinc -ffreestanding -fno-pie -fno-builtin-function -fno-builtin -static
@@ -22,7 +26,10 @@ clean:
 %.o: %.c ${HEADERS}
 	${CC} ${C_FLAGS} -c $< -o $@ 
 
-${BUILD_DIR}/%.o: src/%.asm
+bin/%.o: src/%.asm
+	nasm -felf $< -o $@
+
+src/%.o: src/%.asm
 	nasm -felf $< -o $@
 
 bin/%.bin: src/%.asm
