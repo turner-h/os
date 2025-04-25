@@ -1,5 +1,5 @@
 #include "idt.h"
-#include "types.h"
+#include "../lib/types.h"
 
 idt_gate_t idt[IDT_ENTRIES];
 idt_register_t idt_register;

@@ -15,7 +15,7 @@ jmp $
 
 load_kernel:
     mov bx, KERNEL_OFFSET   ; kernel address
-    mov dh, 9              ; # of sectors to read
+    mov dh, 17           ; # of sectors to read
     mov dl, [BOOT_DRIVE]    ; drive to load from
     call disk_load
     ret

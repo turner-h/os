@@ -1,8 +1,8 @@
-#include "types.h"
-#include "util.h"
+#include "../lib/types.h"
+#include "../lib/util.h"
 #include "idt.h"
 #include "isr.h"
-#include "vga.h"
+#include "../drivers/vga.h"
 #include "port.h"
 
 isr_t interrupt_handlers[256];

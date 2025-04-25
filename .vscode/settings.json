@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "isr.h": "c",
+        "idt.h": "c"
+    }
+}

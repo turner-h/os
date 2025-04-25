@@ -1,12 +1,12 @@
 CC= i386-elf-gcc
 LD= i386-elf-ld
 
-C_SOURCES= $(wildcard src/*.c)
-HEADERS= $(wildcard src/*.h)
+C_SOURCES= $(wildcard src/kernel/*.c src/cpu/*.c src/drivers/*.c src/lib/*.c)
+HEADERS= $(wildcard src/kernel/*.h src/cpu/*.h src/drivers/*.h src/lib/*.h)
 
-BOOT_SOURCES= src/boot.asm src/start.asm
+BOOT_SOURCES= $(wildcard src/boot/*.asm)
 
-ASM_SOURCES= ${filter-out ${BOOT_SOURCES}, ${wildcard src/*.asm}}
+ASM_SOURCES= ${filter-out ${BOOT_SOURCES}, ${wildcard src/kernel/*.asm src/cpu/*.asm src/drivers/*.asm src/lib/*.asm}}
 
 OBJS= ${C_SOURCES:.c=.o} ${ASM_SOURCES:.asm=.o}
 BUILD_DIR= bin
@@ -21,18 +21,18 @@ dirs:
 
 clean:
 	rm -rf bin/
-	rm src/*.o
+	rm src/kernel/*.o src/cpu/*.o src/drivers/*.o src/lib/*.o
 
 %.o: %.c ${HEADERS}
 	${CC} ${C_FLAGS} -c $< -o $@ 
 
-bin/%.o: src/%.asm
+bin/%.o: src/boot/%.asm
 	nasm -felf $< -o $@
 
 src/%.o: src/%.asm
 	nasm -felf $< -o $@
 
-bin/%.bin: src/%.asm
+bin/%.bin: src/boot/%.asm
 	nasm -fbin $< -o $@
 
 bin/kernel.bin: bin/start.o ${OBJS}
@@ -43,4 +43,4 @@ bin/image.bin: bin/boot.bin bin/kernel.bin
 
 run: bin/image.bin
 	qemu-system-i386-unsigned -drive file=$<,format=raw
-	rm src/*.o
+	rm src/kernel/*.o src/cpu/*.o src/drivers/*.o src/lib/*.o

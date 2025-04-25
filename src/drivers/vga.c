@@ -1,6 +1,6 @@
 #include "vga.h"
-#include "port.h"
-#include "util.h"
+#include "../cpu/port.h"
+#include "../lib/util.h"
 
 int get_cursor_pos() {
     port_byte_out(SCREEN_CTRL, 14);             // request high byte
@@ -42,7 +42,7 @@ void kprint_at(int x, int y, char* message) {
     while (message[i] != 0) {
         if (offset > get_offset(VGA_WIDTH-1, VGA_HEIGHT-1)) {   //scrolling
             for(int i = 0; i < VGA_HEIGHT; i++) {
-                memory_copy((char*) (VGA_ADDRESS + get_offset(0, i+1)), (char*) (VGA_ADDRESS + get_offset(0, i )), VGA_WIDTH-1);
+                memory_copy((char*) (VGA_ADDRESS + get_offset(0, i+1)), (char*) (VGA_ADDRESS + get_offset(0, i )), 2 * (VGA_WIDTH));
             }
 
             offset = get_offset(0, VGA_HEIGHT-1);
