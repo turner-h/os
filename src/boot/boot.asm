@@ -1,6 +1,13 @@
 [bits 16]
 [org 0x7c00]
 
+jmp short bootloader
+nop
+
+times 87 db 0
+
+bootloader:
+
 KERNEL_OFFSET equ 0x1000
 
 mov [BOOT_DRIVE], dl
@@ -15,7 +22,7 @@ jmp $
 
 load_kernel:
     mov bx, KERNEL_OFFSET   ; kernel address
-    mov dh, 17           ; # of sectors to read
+    mov dh, 20           ; # of sectors to read
     mov dl, [BOOT_DRIVE]    ; drive to load from
     call disk_load
     ret
@@ -26,11 +33,11 @@ disk_load:
 
     mov ah, 0x02    ; set int 13h to 'read'
     mov al, dh      ; number of sectors to read
-    mov cl, 0x02    ; sector to read, 0x01 is the boot sector
+    mov cl, 0x23    ; sector to read, 0x01 is the boot sector
     mov ch, 0       ; cylinder
 
     ; dl is the drive number
-    mov dh, 0       ; head
+    mov dh, 1       ; head
 
     int 0x13
     jc disk_error

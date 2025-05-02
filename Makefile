@@ -39,7 +39,12 @@ bin/kernel.bin: bin/start.o ${OBJS}
 	${LD} -o $@ -Ttext 0x1000 $^ --oformat binary ${LD_FLAGS}
 
 bin/image.bin: bin/boot.bin bin/kernel.bin
-	cat $^ > $@
+	# cat $^ > $@
+
+	dd if=/dev/zero of=$@ bs=1M count=2
+	mformat -i $@ -F
+	mcopy -i $@ bin/kernel.bin ::
+	cat bin/boot.bin | dd of=$@ bs=1 count=512 conv=notrunc 
 
 run: bin/image.bin
 	qemu-system-i386-unsigned -drive file=$<,format=raw
