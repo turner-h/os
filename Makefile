@@ -47,5 +47,5 @@ bin/image.bin: bin/boot.bin bin/kernel.bin
 	cat bin/boot.bin | dd of=$@ bs=1 count=512 conv=notrunc 
 
 run: bin/image.bin
-	qemu-system-i386-unsigned -drive file=$<,format=raw
 	rm src/kernel/*.o src/cpu/*.o src/drivers/*.o src/lib/*.o
+	qemu-system-i386 -drive file=$<,format=raw
