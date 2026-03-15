@@ -1,4 +1,5 @@
 #include "types.h"
+#include "../drivers/vga.h"
 
 void memory_copy(char* source, char* dest, int nbytes) {
     for (int i = 0; i < nbytes; i++) {
@@ -6,13 +7,56 @@ void memory_copy(char* source, char* dest, int nbytes) {
     }
 }
 
+int string_cmp_case_sensitive(char* str1, char* str2, int len, int case_sensitive) {
+    for (int i = 0; i < len; i++) {
+        u8 c1 = *(str1 + i);
+        u8 c2 = *(str2 + i);
+        
+        if (!case_sensitive) {
+            if (c1 > 0x5A) {
+                c1 -= 0x20;
+            }
+
+            if (c2 > 0x5A) {
+                c2 -= 0x20;
+            }
+        }
+
+
+        if(c1 != c2) {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+int string_cmp(char* str1, char* str2, int len) {
+    return string_cmp_case_sensitive(str1, str2, len, 0);
+}
+
 void itoa(int num, char str[]){
+    char temp[4];
+    
+    if(num == 0) {
+        str[0] = '0';
+        str[1] = 0;
+        return;
+    }
+
     int i = 0;
     while (num > 0) {
-        str[i] = (num % 10) + '0';
+        temp[i] = (num % 10) + '0';
         num /= 10;
         i++;
     }
+
+    int j = i;
+    while (j > 0) {
+        str[j - 1] = temp[i - j];
+        j--;
+    }
+
     str[i] = 0;
 }
 

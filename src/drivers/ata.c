@@ -29,7 +29,7 @@ int disk_read(int slave, u32 addr, u32 sectors, u16 *buffer) {
 
     block_until_ready();                    // waits until disk is ready
 
-    for (u8 i = 0; i < 255; i++) {
+    for (int i = 0; i < 256; i++) {
         u16 data = port_word_in(0x1F0);
         buffer[i] = data;
     }

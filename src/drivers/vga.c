@@ -2,6 +2,8 @@
 #include "../cpu/port.h"
 #include "../lib/util.h"
 
+int char_in_message(char* message, int i, int len);
+
 int get_cursor_pos() {
     port_byte_out(SCREEN_CTRL, 14);             // request high byte
     int position = port_byte_in(SCREEN_DATA) << 8;   // read high byte
@@ -27,7 +29,7 @@ int get_offset_row(int offset) {
     return offset / (2 * VGA_WIDTH);
 }
 
-void kprint_at(int x, int y, char* message) {
+void kprint_at(int x, int y, int len, char* message) {
     // (-1, -1) uses current cursor position
     int offset;
     if (x < 0 && y < 0) {
@@ -39,7 +41,7 @@ void kprint_at(int x, int y, char* message) {
     char *screen = (char*) VGA_ADDRESS;
 
     int i = 0;
-    while (message[i] != 0) {
+    while (char_in_message(message, i, len)) {
         if (offset > get_offset(VGA_WIDTH-1, VGA_HEIGHT-1)) {   //scrolling
             for(int i = 0; i < VGA_HEIGHT; i++) {
                 memory_copy((char*) (VGA_ADDRESS + get_offset(0, i+1)), (char*) (VGA_ADDRESS + get_offset(0, i )), 2 * (VGA_WIDTH));
@@ -63,8 +65,31 @@ void kprint_at(int x, int y, char* message) {
     set_cursor_pos(offset);
 }
 
+int char_in_message(char* message, int i, int len) {
+    if (len < 0) {
+        return message[i] != 0;
+    } else {
+        return i < len;
+    }
+}
+
 void kprint(char *message) {
-    kprint_at(-1, -1, message);
+    kprint_at(-1, -1, -1, message);
+}
+
+void kprint_char(char *message) {
+    char printed_char = *message;
+    kprint(&printed_char);
+}
+
+void kprint_u8(u8 num) {
+    char str[4];
+    itoa(num, str);
+    kprint(str);
+}
+
+void kprint_len(char* message, int len) {
+    kprint_at(-1, -1, len, message);
 }
 
 void clear_screen() {

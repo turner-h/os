@@ -2,6 +2,7 @@
 #include "../cpu/isr.h"
 #include "../drivers/keyboard.h"
 #include "../drivers/ata.h"
+#include "../kernel/fs.h"
 #include "../lib/util.h"
 
 void main() {
@@ -11,22 +12,14 @@ void main() {
     asm volatile("sti");
     init_keyboard();
 
+    init_fs();
+
     u16 buffer[256];
+    fs_open("/test/test.txt", (u16*) buffer);
 
-    disk_read(0, 0, 1, (u16*) buffer);
-    
-    for (int i = 0; i < 256; i++) {
-        u16 data = buffer[i];
-        char hex[3];
+    kprint((char*) buffer);
+    kprint("\n");
 
-        u8 h = data & 0xFF;
-        cth(h, hex);
-        kprint(hex);
-        kprint(" ");
-
-        h = data >> 8;
-        cth(h, hex);
-        kprint(hex);
-        kprint(" ");
-    }
+    fs_open("/test/test2/woah.txt", (u16*) buffer);
+    kprint((char*) buffer);
 }
