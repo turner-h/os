@@ -1,3 +1,6 @@
+#ifndef VGA_H
+#define VGA_H
+
 #include "../lib/types.h"
 
 #define VGA_ADDRESS 0xb8000
@@ -13,3 +16,5 @@ void kprint_at(int x, int y, int len, char *message);
 void kprint_char(char *message);
 void kprint_u8(u8 num);
 void kprint_len(char* message, int len);
+
+#endif
