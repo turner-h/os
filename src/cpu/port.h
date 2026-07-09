@@ -1,4 +1,4 @@
-#ifdef PORT_H
+#ifndef PORT_H
 #define PORT_H
 
 unsigned char port_byte_in(unsigned short port);

@@ -81,6 +81,10 @@ switch_to_protected_mode:
 
 [bits 32]
 init_pm:
+    in al, 0x92         ; enable A20 line
+    or al, 2
+    out 0x92, al
+
     mov ax, DATA_SEG    ; set up segment registers (might be initialized with garbage data)
     mov ds, ax
     mov ss, ax

@@ -1,6 +1,7 @@
-#include "../drivers/vga.h"
 #include "../cpu/isr.h"
+#include "../cpu/memory.h"
 #include "../drivers/keyboard.h"
+#include "../drivers/vga.h"
 #include "../drivers/ata.h"
 #include "../kernel/fs.h"
 #include "../lib/util.h"
@@ -8,6 +9,7 @@
 void main() {
     clear_screen();
     install_isrs();
+    init_paging();
 
     asm volatile("sti");
     init_keyboard();
