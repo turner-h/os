@@ -14,3 +14,4 @@ void init_paging() {
 
     enable_paging(page_directory);
 }
+

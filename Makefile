@@ -14,6 +14,8 @@ BUILD_DIR= bin
 C_FLAGS= -m32 -nostdlib -nostdinc -ffreestanding -fno-pie -fno-builtin-function -fno-builtin -static
 LD_FLAGS= -static -s
 
+LD_SCRIPT= linker.ld
+
 all: dirs run
 
 dirs:
@@ -36,7 +38,7 @@ bin/%.bin: src/boot/%.asm
 	nasm -fbin $< -o $@
 
 bin/kernel.bin: bin/start.o ${OBJS}
-	${LD} -o $@ -Ttext 0x1000 $^ --oformat binary ${LD_FLAGS}
+	${LD} -o $@ -T ${LD_SCRIPT} $^ --oformat binary ${LD_FLAGS}
 
 bin/image.bin: bin/boot.bin bin/kernel.bin
 	# cat $^ > $@

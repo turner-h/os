@@ -8,12 +8,16 @@ times 87 db 0
 
 bootloader:
 
-KERNEL_OFFSET equ 0x1000
+KERNEL_OFFSET equ 0x100000
 
 mov [BOOT_DRIVE], dl
 
 mov bp, 0x9000  ; init stack
 mov bp, sp
+
+in al, 0x92         ; enable A20 line
+or al, 2
+out 0x92, al
 
 call load_kernel
 call switch_to_protected_mode
@@ -21,7 +25,10 @@ call switch_to_protected_mode
 jmp $
 
 load_kernel:
-    mov bx, KERNEL_OFFSET   ; kernel address
+    mov ax, 0x1000      ; sets kernel address to 0x100000
+    mov es, ax
+    xor bx, bx
+
     mov dh, 20           ; # of sectors to read
     mov dl, [BOOT_DRIVE]    ; drive to load from
     call disk_load
@@ -81,10 +88,6 @@ switch_to_protected_mode:
 
 [bits 32]
 init_pm:
-    in al, 0x92         ; enable A20 line
-    or al, 2
-    out 0x92, al
-
     mov ax, DATA_SEG    ; set up segment registers (might be initialized with garbage data)
     mov ds, ax
     mov ss, ax
@@ -98,6 +101,8 @@ init_pm:
     mov ebx, PM_MESSAGE
     call print
 
+    call move_kernel
+
     call KERNEL_OFFSET  ; jump to C
     jmp $               ; loop infinitely if kernel returns
 
@@ -106,6 +111,22 @@ DRIVE_ERROR db "failed to load from drive", 0
 PM_MESSAGE db "loaded in protected mode", 0
 VIDEO_MEMORY equ 0xb8000    ; location of vga buffer
 WHITE_ON_BLACK equ 0x0f     ; color scheme
+
+KERNEL_SIZE equ 0x2000  ; fix this, read fs
+
+move_kernel:
+    mov esi, 0x10000       ; source
+    mov edi, 0x100000      ; destination
+    mov ecx, KERNEL_SIZE    
+    shr ecx, 2             
+    cld 
+    rep movsd               ; moves kernel 4 bytes at a time
+
+    mov ecx, KERNEL_SIZE 
+    or ecx, 3
+    rep movsb               ; remaining bytes
+    ret
+
 
 print:
     pusha
