@@ -17,11 +17,11 @@ void main() {
     init_fs();
 
     u16 buffer[256];
-    fs_open("/test/test.txt", (u16*) buffer);
+    fs_open("/test.txt", (u16*) buffer);
 
     kprint((char*) buffer);
     kprint("\n");
 
-    fs_open("/test/test2/woah.txt", (u16*) buffer);
+    fs_open("/test2/woah.txt", (u16*) buffer);
     kprint((char*) buffer);
 }

@@ -19,18 +19,34 @@ in al, 0x92         ; enable A20 line
 or al, 2
 out 0x92, al
 
+call read_root_dir
+
+KERNEL_SIZE_OFFSET equ 28
+
 call load_kernel
 call switch_to_protected_mode
 
 jmp $
+
+read_root_dir:
+    mov bx, sector_2        ; reads to sector 2
+    mov dh, 1               ; reads 1 sector
+    mov dl, [BOOT_DRIVE]    ; drive to load from
+    mov cl, 0x22            ; sector to read, 0x01 is the boot sector
+    call disk_load
+    ret
 
 load_kernel:
     mov ax, 0x1000      ; sets kernel address to 0x100000
     mov es, ax
     xor bx, bx
 
-    mov dh, 20           ; # of sectors to read
+    mov ax, [sector_2 + KERNEL_SIZE_OFFSET] ; get kernel size
+    shr ax, 7
+
+    mov dh, al           ; # of sectors to read
     mov dl, [BOOT_DRIVE]    ; drive to load from
+    mov cl, 0x23    ; sector to read, 0x01 is the boot sector
     call disk_load
     ret
 
@@ -40,7 +56,6 @@ disk_load:
 
     mov ah, 0x02    ; set int 13h to 'read'
     mov al, dh      ; number of sectors to read
-    mov cl, 0x23    ; sector to read, 0x01 is the boot sector
     mov ch, 0       ; cylinder
 
     ; dl is the drive number
@@ -112,17 +127,15 @@ PM_MESSAGE db "loaded in protected mode", 0
 VIDEO_MEMORY equ 0xb8000    ; location of vga buffer
 WHITE_ON_BLACK equ 0x0f     ; color scheme
 
-KERNEL_SIZE equ 0x2000  ; fix this, read fs
-
 move_kernel:
     mov esi, 0x10000       ; source
     mov edi, 0x100000      ; destination
-    mov ecx, KERNEL_SIZE    
+    mov ecx, [sector_2 + KERNEL_SIZE_OFFSET]    
     shr ecx, 2             
     cld 
     rep movsd               ; moves kernel 4 bytes at a time
 
-    mov ecx, KERNEL_SIZE 
+    mov ecx, [sector_2 + KERNEL_SIZE_OFFSET] 
     or ecx, 3
     rep movsb               ; remaining bytes
     ret
@@ -179,3 +192,5 @@ DATA_SEG equ gdt_data - gdt_start
 
 times 510-($-$$) db 0
 db 0x55, 0xAA
+
+sector_2:

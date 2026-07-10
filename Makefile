@@ -46,7 +46,7 @@ bin/image.bin: bin/boot.bin bin/kernel.bin
 	dd if=/dev/zero of=$@ bs=1M count=2
 	mformat -i $@ -F
 	mcopy -i $@ bin/kernel.bin ::
-	mcopy -s -i $@ ./test/ ::
+	mcopy -s -i $@ ./root/* ::
 	cat bin/boot.bin | dd of=$@ bs=1 count=512 conv=notrunc 
 
 run: bin/image.bin
