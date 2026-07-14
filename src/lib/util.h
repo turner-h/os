@@ -1,6 +1,8 @@
 #ifndef UTIL_H
 #define UTIL_H
 
+#define HIGHER_HALF_OFFSET 0xBFF00000
+
 void memory_copy(char* source, char* dest, int nbytes);
 int string_cmp_case_sensitive(char* str1, char* str2, int len, int case_sensitive);
 int string_cmp(char* str1, char* str2, int len);

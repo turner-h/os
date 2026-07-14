@@ -9,4 +9,5 @@ TODO:
 - [x] update bootloader to load the kernel at 1Mb
 - [x] update bootloader to read fs
 - [ ] heap for kernel via kmalloc
+- [ ] move kernel to higher half (0xC0000000)
 - [ ] finish fs implementation

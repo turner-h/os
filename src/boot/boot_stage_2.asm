@@ -1,4 +1,13 @@
+[bits 32]
+[extern start]
+[extern main_jump]
+
+call start
+jmp $
+
 global enable_paging
+global update_stack_pointer
+global flush_tlb
 
 enable_paging:
     push ebp
@@ -13,4 +22,14 @@ enable_paging:
 
     mov esp, ebp
     pop ebp
+    ret
+
+update_stack_pointer:
+    mov esp, 0xC0009000
+    mov ebp, 0xC0009000
+    call main_jump
+
+flush_tlb:
+    mov eax, cr3
+    mov cr3, eax
     ret

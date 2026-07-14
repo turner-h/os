@@ -1,5 +1,5 @@
 SECTIONS {
-    . = 0x00100000;
+    . = 0x0001000;
 
     .text : {
         *(.text*)
@@ -12,9 +12,9 @@ SECTIONS {
     .data : {
         *(.data*)
     }
-   
+
     .bss : {
         *(.bss*)
-        kernel_end = .;
+        boot_end = .;
     }
 }

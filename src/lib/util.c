@@ -60,7 +60,7 @@ void itoa(int num, char str[]){
     str[i] = 0;
 }
 
-void cth(u8 c, char hex[]) {
+void cth(char c, char hex[]) {
     u8 first, second;
      
     first = c / 0x10;
