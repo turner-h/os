@@ -10,7 +10,7 @@ void main() {
     clear_screen();
     kprint("higher half kernel loaded\n");
     install_isrs();
-    //init_paging();
+    init_heap();
 
     asm volatile("sti");
     init_keyboard();

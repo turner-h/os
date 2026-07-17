@@ -8,6 +8,8 @@ TODO:
 - [ ] detect size of usable memory
 - [x] update bootloader to load the kernel at 1Mb
 - [x] update bootloader to read fs
+- [x] new gdt
 - [ ] heap for kernel via kmalloc
-- [ ] move kernel to higher half (0xC0000000)
+- [x] move kernel to higher half (0xC0000000)
+- [ ] kprintf with %d, %x, %s
 - [ ] finish fs implementation

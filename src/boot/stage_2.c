@@ -1,7 +1,5 @@
 #include "../lib/types.h"
 
-// one million pages!!!!
-#define TOTAL_PAGES 1048576
 #define ROOT_DIR_ADDR 0xC000
 #define KERNEL_PHYS_ADDR 0x00100000
 #define KERNEL_VADDR 0xC0000000
@@ -49,14 +47,13 @@ void remap_kernel(u32 kernel_pages) {
         b_map_page((void*) (KERNEL_PHYS_ADDR + (i * 0x1000)), (void*) (KERNEL_VADDR + (i * 0x1000)), 3);
     }
 
-    for (int j = 0; j < 4; j++) {
+    for (int j = 0; j < 10; j++) {
         b_map_page((void *) b_pframe_alloc(), (void *) (0xC0008000 - (j * 0x1000)), 3);
     }
 
     b_map_page((void *) 0x000b8000, (void *) 0xC00B8000, 3);
 
     flush_tlb();
-    *(u32 *)0xC0008FFC = 0xDEADBEEF;
 }
 
 void init_paging() {

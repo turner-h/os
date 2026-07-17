@@ -76,6 +76,8 @@ global irq13
 global irq14
 global irq15
 
+global reload_segments
+
 isr0:
     cli
     push byte 0
@@ -357,3 +359,14 @@ irq15:
     push byte 15
     push byte 47
     jmp isr_common
+
+reload_segments:
+    jmp 0x08:reload_cs
+reload_cs:
+    mov ax, 0x10    
+    mov ds, ax
+    mov ss, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+    ret

@@ -15,6 +15,6 @@ SECTIONS {
    
     .bss : AT(ADDR(.bss) - 0xC0000000 + 0x00100000) {
         *(.bss*)
-        kernel_end = .;
+        kernel_end = . - 0xC0000000 + 0x00100000;
     }
 }

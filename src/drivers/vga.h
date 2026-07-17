@@ -4,7 +4,7 @@
 #include "../lib/types.h"
 #include "../lib/util.h"
 
-#define VGA_ADDRESS 0x000b8000
+#define VGA_ADDRESS 0xC00b8000
 #define SCREEN_CTRL 0x3D4
 #define SCREEN_DATA 0x3D5
 

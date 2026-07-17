@@ -34,24 +34,14 @@ void init_pframe_allocator() {
     g_page_bitmap = (u32 *) ((((u32) &kernel_end >> 12) + 1) << 12);  // gets next frame after kernel
     g_first_page_addr = g_page_bitmap;
 
-    // *g_page_bitmap = 0xFFFFFFFF;
-    // for (int i = 1; i < (TOTAL_PAGES / 32) - 1; i++) {
-    //     *(g_page_bitmap + i) = 0;
-    // }
-
-    u32* page_directory = pframe_alloc();
-    u32* first_page_table = pframe_alloc();
-
-    for (unsigned int i = 0; i < 1024; i++) {
-        page_directory[i] = 0x00000002;                 // kernel only, R/W enabled, page table is not present
-        first_page_table[i] = (i * 0x1000) | 0x11;      // identity maps first 4Mib, kernel only, R/W enabled, page is present
+    for (int i = 0; i < 32; i++) {
+        map_page(pframe_alloc(), (u8*) g_page_bitmap + (i * 0x1000), 3);
     }
 
-    page_directory[0] = ((u32) first_page_table) | 3;   // kernel only, R/W, present
-    page_directory[1023] = (u32) page_directory | 3;    // map last pde to itself
-
-    // enable_paging(page_directory);
-    // remap_kernel();
+    *g_page_bitmap = 0xFFFFFFFF;
+    for (int i = 1; i < (TOTAL_PAGES / 32) - 1; i++) {
+        *(g_page_bitmap + i) = 0;
+    }
 }
 
 void* get_physical_addr(void* virt_addr) {
@@ -111,9 +101,17 @@ void unmap_page(void* virt_addr) {
     }
 }
 
+void unmap_first_mb() {
+    u32* page_directory = (u32*) PAGE_DIRECTORY_VADDR;
+    page_directory[0] = 0x00000002;
+}
+
 void init_heap() {
-    g_heap_data.heap_addr = pframe_alloc();
-    // map to higher half once kernel is remapped
+    init_pframe_allocator();
+    unmap_first_mb();
+    
+    map_page(pframe_alloc(), (void*) HEAP_START, 3);
+    g_heap_data.heap_end = (void *) (HEAP_START + 0x1000);
 }
 
 void* kmalloc(u32 size) {
