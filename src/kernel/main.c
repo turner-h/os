@@ -17,12 +17,14 @@ void main() {
 
     init_fs();
 
-    u16 buffer[256];
-    fs_open("/test.txt", (u16*) buffer);
+    u16* buffer = kmalloc(256 * sizeof(u16));
+    fs_open("/test.txt", buffer);
 
     kprint((char*) buffer);
     kprint("\n");
 
-    fs_open("/test2/woah.txt", (u16*) buffer);
+    fs_open("/test2/woah.txt", buffer);
     kprint((char*) buffer);
+
+    kfree(buffer);
 }

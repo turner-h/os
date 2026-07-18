@@ -9,7 +9,8 @@ TODO:
 - [x] update bootloader to load the kernel at 1Mb
 - [x] update bootloader to read fs
 - [x] new gdt
-- [ ] heap for kernel via kmalloc
+- [x] heap for kernel via kmalloc
 - [x] move kernel to higher half (0xC0000000)
 - [ ] kprintf with %d, %x, %s
+- [ ] test suite
 - [ ] finish fs implementation
