@@ -11,6 +11,6 @@ TODO:
 - [x] new gdt
 - [x] heap for kernel via kmalloc
 - [x] move kernel to higher half (0xC0000000)
-- [ ] kprintf with %d, %x, %s
+- [x] kprintf with %d, %x, %s
 - [ ] test suite
 - [ ] finish fs implementation

@@ -17,5 +17,7 @@ void kprint_at(int x, int y, int len, char *message);
 void kprint_char(char *message);
 void kprint_u8(u8 num);
 void kprint_len(char* message, int len);
+void kprintf(char* format, ...);
+void vga_set_color(u8 foreground, u8 background);
 
 #endif

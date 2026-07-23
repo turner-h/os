@@ -35,6 +35,19 @@ int string_cmp(char* str1, char* str2, int len) {
     return string_cmp_case_sensitive(str1, str2, len, 0);
 }
 
+char* _stringf(char* str, int n, ...) {
+    kprint(str);
+
+    __builtin_va_list args;
+    __builtin_va_start(args, n);
+    for (int i = 0; i < n; i++) {
+        kprint((char*) __builtin_va_arg(args, char*));
+        kprint("\n");
+    }
+    __builtin_va_end(args);
+
+}
+
 void itoa(int num, char str[]){
     char temp[4];
     
@@ -63,18 +76,18 @@ void itoa(int num, char str[]){
 void cth(char c, char hex[]) {
     u8 first, second;
      
-    first = c / 0x10;
-    second = c % 0x10;
+    first = (c >> 4) & 0xF;
+    second = c & 0xF;
      
     if (first < 10) { first += '0'; }
     else {
-        first -= 10;
         first += 'A';
+        first -= 10;
     }
     if (second < 10)  { second += '0'; }
     else {
-        second -= 10;
         second += 'A';
+        second -= 10;
     }
         
     hex[0] = first;

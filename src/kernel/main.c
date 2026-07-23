@@ -8,7 +8,7 @@
 
 void main() {
     clear_screen();
-    kprint("higher half kernel loaded\n");
+    kprintf("higher half kernel loaded\n");
     install_isrs();
     init_heap();
 
@@ -20,11 +20,12 @@ void main() {
     u16* buffer = kmalloc(256 * sizeof(u16));
     fs_open("/test.txt", buffer);
 
-    kprint((char*) buffer);
-    kprint("\n");
+    kprintf((char*) buffer);
+    kprintf("\n");
 
     fs_open("/test2/woah.txt", buffer);
-    kprint((char*) buffer);
+    kprintf((char*) buffer);
+    kprintf("\n");
 
     kfree(buffer);
 }
