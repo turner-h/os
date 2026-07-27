@@ -138,16 +138,28 @@ void* kmalloc(u32 size) {
         }
     }
 
-    void* addr = (void*) node;
+    // TODO: edge case of perfect alloc at end of heap
+
+    char* addr = (char*) node;
     if (node->size == size + sizeof(u32)) {
-        node->prev->next = node->next; 
-        node->next->prev = node->prev; 
+        if (node->prev != NULL) {
+            node->prev->next = node->next;
+        } 
+
+        if (node->next != NULL) {
+            node->next->prev = node->prev; 
+        }
+
+        if (node == g_heap_data.free_node) {
+            g_heap_data.free_node = node->next;
+        }
     } else {
-        struct FreeNode* new_node = addr + size + sizeof(u32);
+        struct FreeNode* new_node = (struct FreeNode*) (addr + size + sizeof(u32));
 
         new_node->next = node->next;
         new_node->prev = node->prev;
-
+        new_node->size = node->size - (size + sizeof(u32));
+        
         if (node->prev != NULL) {
             node->prev->next = new_node; 
         }
@@ -155,10 +167,15 @@ void* kmalloc(u32 size) {
         if (node->next != NULL) {
             node->next->prev = new_node;
         } 
+
+        if (node == g_heap_data.free_node) {
+            g_heap_data.free_node = new_node;
+        }
     }
 
     *((u32*) addr) = size + sizeof(u32);
     addr += sizeof(u32);
+
     return addr;
 }
 
@@ -173,15 +190,18 @@ void kfree(void* addr) {
     struct FreeNode* node = g_heap_data.free_node;
     int condensable = 0;
     while (node->next != NULL) {
-        if ((void*) node == addr + size) {
+        if ((char *) node == addr + size) {
             condensable = 1;
+            break;
+        } else if ((char *) node + node->size == addr) {
+            condensable = 2;
             break;
         }
 
         node = node->next;
     }
 
-    if (condensable) {
+    if (condensable == 1) {
         new_node->size += node->size;
 
         new_node->next = node->next;
@@ -193,7 +213,13 @@ void kfree(void* addr) {
 
         if (node->next != NULL) {
             node->next->prev = new_node;
-        } 
+        }
+
+        if (node == g_heap_data.free_node) {
+            g_heap_data.free_node = new_node;
+        }
+    } else if (condensable == 2) {
+        node->size += size;
     } else {
         new_node->next = g_heap_data.free_node;
         g_heap_data.free_node = new_node;

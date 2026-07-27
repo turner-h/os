@@ -45,9 +45,11 @@ void kprint_at(int x, int y, int len, char* message) {
     int i = 0;
     while (char_in_message(message, i, len)) {
         if (offset > get_offset(VGA_WIDTH-1, VGA_HEIGHT-1)) {   //scrolling
-            for(int i = 0; i < VGA_HEIGHT; i++) {
+            for(int i = 0; i < VGA_HEIGHT - 1; i++) {
                 memory_copy((char*) (VGA_ADDRESS + get_offset(0, i+1)), (char*) (VGA_ADDRESS + get_offset(0, i )), 2 * (VGA_WIDTH));
             }
+
+            memory_set((char*) (VGA_ADDRESS + get_offset(0, VGA_HEIGHT - 1)), 0, 2 * VGA_WIDTH);
 
             offset = get_offset(0, VGA_HEIGHT-1);
         }
@@ -79,9 +81,9 @@ void kprint(char *message) {
     kprint_at(-1, -1, -1, message);
 }
 
-void kprint_char(char *message) {
-    char printed_char = *message;
-    kprint(&printed_char);
+void kprint_char(char* message) {
+    u8 printed_char[2] = {*message, 0};
+    kprint(printed_char);
 }
 
 void kprint_u8(u8 num) {

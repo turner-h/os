@@ -12,5 +12,5 @@ TODO:
 - [x] heap for kernel via kmalloc
 - [x] move kernel to higher half (0xC0000000)
 - [x] kprintf with %d, %x, %s
-- [ ] test suite
+- [x] test suite
 - [ ] finish fs implementation

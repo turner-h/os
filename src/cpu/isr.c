@@ -109,13 +109,12 @@ char *exception_messages[] = {
 };
 
 void cpu_isr(registers_t r) {
-    kprint("received interrupt: ");
-    char s[3];
-    itoa(r.int_no, s);
-    kprint(s);
-    kprint("\n");
-    kprint(exception_messages[r.int_no]);
-    kprint("\n");
+    kprintf("== %s ==\n", exception_messages[r.int_no]);
+    kprintf("EIP: %x\n", r.eip);
+    kprintf("ESP: %x\n", r.esp);
+    kprintf("ERROR CODE: %d\n", r.err_code);
+
+    for (;;);
 }
 
 void isr_handler(registers_t r) {

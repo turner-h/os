@@ -7,6 +7,12 @@ void memory_copy(char* source, char* dest, int nbytes) {
     }
 }
 
+void memory_set(char* dest, char data, int nbytes) {
+    for (int i = 0; i < nbytes; i++) {
+        *(dest + i) = data;
+    }
+}
+
 int string_cmp_case_sensitive(char* str1, char* str2, int len, int case_sensitive) {
     for (int i = 0; i < len; i++) {
         u8 c1 = *(str1 + i);

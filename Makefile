@@ -1,13 +1,13 @@
 CC= i386-elf-gcc
 LD= i386-elf-ld
 
-C_SOURCES= $(wildcard src/boot/*.c src/kernel/*.c src/cpu/*.c src/drivers/*.c src/lib/*.c)
-HEADERS= $(wildcard src/boot/*.h src/kernel/*.h src/cpu/*.h src/drivers/*.h src/lib/*.h)
+C_SOURCES= $(wildcard src/*/*.c)
+HEADERS= $(wildcard src/*/*.h)
 
 BOOT_SOURCES= $(wildcard src/boot/*)
 BOOT_OBJS= ${BOOT_SOURCES:.asm=.o} ${BOOT_SOURCES:.c=.o}
 
-ASM_SOURCES= ${filter-out ${BOOT_SOURCES}, ${wildcard src/kernel/*.asm src/cpu/*.asm src/drivers/*.asm src/lib/*.asm}}
+ASM_SOURCES= ${filter-out ${BOOT_SOURCES}, ${wildcard src/*/*.asm}}
 
 OBJS= ${filter-out ${BOOT_OBJS}, ${C_SOURCES:.c=.o} ${ASM_SOURCES:.asm=.o}}
 BUILD_DIR= bin
@@ -25,7 +25,7 @@ dirs:
 
 clean:
 	rm -rf bin/
-	rm src/kernel/*.o src/cpu/*.o src/drivers/*.o src/lib/*.o
+	rm src/*/*.o
 
 %.o: %.c ${HEADERS}
 	${CC} ${C_FLAGS} -c $< -o $@ 
@@ -54,5 +54,5 @@ bin/image.bin: bin/boot.bin bin/stage_2.bin bin/kernel.bin
 	cat bin/boot.bin | dd of=$@ bs=1 count=512 conv=notrunc 
 
 run: bin/image.bin
-	rm src/boot/*.o src/kernel/*.o src/cpu/*.o src/drivers/*.o src/lib/*.o
+	rm src/*/*.o
 	qemu-system-i386 -drive file=$<,format=raw

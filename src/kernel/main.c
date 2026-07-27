@@ -5,6 +5,7 @@
 #include "../drivers/ata.h"
 #include "../kernel/fs.h"
 #include "../lib/util.h"
+#include "../test/test.h"
 
 void main() {
     clear_screen();
@@ -25,7 +26,10 @@ void main() {
 
     fs_open("/test2/woah.txt", buffer);
     kprintf((char*) buffer);
-    kprintf("\n");
+    kprintf("\n\n");
 
     kfree(buffer);
+
+    init_tests();
+    test_run_all();
 }
