@@ -42,6 +42,26 @@ void init_pframe_allocator() {
     for (int i = 1; i < (TOTAL_PAGES / 32) - 1; i++) {
         *(g_page_bitmap + i) = 0;
     }
+
+    
+    int entries = *((u32*) MMAP_ENTRIES_ADDR);
+
+    MmapEntry entry;
+    for (int i = 0; i < entries; i++) {
+            memory_copy((MmapEntry*) MMAP_ADDR + i, &entry, sizeof(MmapEntry));
+            if (entry.region_type == 2) {
+                u32 page_offset = ((u32) entry.base_address - kernel_end) >> 12;
+                u32 num_pages = ((u32) entry.length >> 12) + 1;
+                
+                for (int i = 0; i < num_pages; i++) {
+                    if ((page_offset % 32) + i >= 32) { 
+                        page_offset++;
+                    }
+
+                    g_page_bitmap[page_offset / 32] &= 1 << ((page_offset % 32) + i);
+                }
+            }   
+    }
 }
 
 void* get_physical_addr(void* virt_addr) {

@@ -109,9 +109,10 @@ char *exception_messages[] = {
 };
 
 void cpu_isr(registers_t r) {
-    kprintf("== %s ==\n", exception_messages[r.int_no]);
+    kprintf("\n== %s ==\n", exception_messages[r.int_no]);
     kprintf("EIP: %x\n", r.eip);
     kprintf("ESP: %x\n", r.esp);
+    kprintf("EAX: %x\n", r.eax);
     kprintf("ERROR CODE: %d\n", r.err_code);
 
     for (;;);

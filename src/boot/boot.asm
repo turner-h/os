@@ -1,14 +1,17 @@
 [bits 16]
 [org 0x7c00]
 
-jmp short bootloader
-nop
+;jmp short bootloader
+;nop
 
-times 87 db 0
+;times 87 db 0
 
 bootloader:
 
 STAGE_2_OFFSET equ 0x10000
+MMAP_ENTRIES equ 0x8000
+MMAP_LOCATION equ 0x8004
+SMAP equ 0x534D4150
 
 mov [BOOT_DRIVE], dl
 
@@ -24,6 +27,7 @@ call read_root_dir
 STAGE_2_SIZE_OFFSET equ 28
 
 call load_kernel
+call detect_memory
 call switch_to_protected_mode
 
 jmp $
@@ -93,8 +97,66 @@ print_rm_end:
     popa
     ret
 
+detect_memory:
+    xor ax, ax
+    mov es, ax
+    mov di, MMAP_LOCATION   ; set mmap buffer location in es:di
+   
+    xor bp, bp              ; store entry count in bp
+
+    xor ebx, ebx            ; function call for int 0x15, eax 0xe280
+    mov edx, SMAP
+    mov eax, 0xE820
+    mov [es:di + 20], dword 1   ; forces a valid entry somehow?
+    mov ecx, 24
+    int 0x15
+
+    jc dm_failed            ; test failure cases
+    mov edx, SMAP
+    cmp eax, edx
+    jne dm_failed
+    test ebx, ebx
+    je dm_failed
+   
+dm_loop:
+    mov eax, 0xE820
+    mov [es:di + 20], dword 1   ; forces a valid entry somehow?
+    mov ecx, 24
+    int 0x15
+
+    jc dm_finished
+    mov edx, SMAP
+
+dm_jump_in:
+    jcxz dm_skip_entry
+    cmp cl, 20
+    jbe dm_not_ext
+
+    test byte [es:di + 20], 1   ; checks the "ignore this entry" bit
+    jmp dm_skip_entry           ; why would you want a bit for that 
+
+dm_not_ext:     
+    mov ecx, [es:di + 8]
+    or ecx, [es:di + 12]    ; checks that memory section length != 0
+    jz dm_skip_entry
+
+    inc bp
+    add di, 24
+
+dm_skip_entry:
+    test ebx, ebx
+    jne dm_loop
+
+dm_finished:
+    mov [es:MMAP_ENTRIES], bp
+    clc
+    ret
+dm_failed:
+    stc 
+    ret
+
 switch_to_protected_mode:
-    cli                     ; clear interrupta
+    cli                     ; clear interrupts
     lgdt [gdt_descriptor]   ; load gdt
     mov eax, cr0
     or eax, 0x1             ; enable protected mode
