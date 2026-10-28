@@ -9,7 +9,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y qemu-system-x86 nasm gcc-multilib make
 
       - name: Install build deps
-        run: sudo apt-get update && sudo apt-get install -y qemu-system-x86 nasm make bison flex libgmp3-dev libmpc-dev libmpfr-dev texinfo
+        run: sudo apt-get update && sudo apt-get install -y qemu-system-x86 nasm make bison flex libgmp3-dev libmpc-dev libmpfr-dev texinfo mtools
       - name: Cache cross compiler
         id: cross
         uses: actions/cache@v4
