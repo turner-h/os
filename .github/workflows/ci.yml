@@ -8,7 +8,7 @@ jobs:
       - name: Install deps
         run: sudo apt-get update && sudo apt-get install -y qemu-system-x86 nasm gcc-multilib make
 
-          - name: Install build deps
+      - name: Install build deps
         run: sudo apt-get update && sudo apt-get install -y qemu-system-x86 nasm make bison flex libgmp3-dev libmpc-dev libmpfr-dev texinfo
       - name: Cache cross compiler
         id: cross
