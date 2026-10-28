@@ -25,7 +25,7 @@ jobs:
       - name: Build test image
         run: make test_build 
       - name: Boot in QEMU
-        run: ./scripts/run-qemu-test.sh
+        run: sh ./scripts/run-qemu-test.sh
       - name: Save logs
         if: always()
         uses: actions/upload-artifact@v4
