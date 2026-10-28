@@ -5,6 +5,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Cache i386-elf Toolchain
+        id: cache-toolchain
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/i386-elf-toolchain
+          key: ${{ runner.os }}-i386-elf-gcc-v1
+
+      - name: Download and Install i386-elf Toolchain
+        if: steps.cache-toolchain.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ${{ github.workspace }}/i386-elf-toolchain
+          cd ${{ github.workspace }}/i386-elf-toolchain
+          
+          # Download trusted precompiled binaries (Binutils & GCC compiled for x86_64 Linux)
+          curl -L -o toolchain.tar.gz https://github.com
+          tar -xzf toolchain.tar.gz --strip-components=1
+          rm toolchain.tar.gz
+
+      - name: Add Toolchain to PATH
+        run: |
+          # Appends the compiler binaries directly to the GitHub Actions PATH environment
+          echo "${{ github.workspace }}/i386-elf-toolchain/bin" >> $GITHUB_PATH
+
       - name: Install deps
         run: sudo apt-get update && sudo apt-get install -y qemu-system-x86 nasm gcc-multilib make
       - name: Build test image
