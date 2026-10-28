@@ -18,7 +18,7 @@ jobs:
           key: i686-elf-gcc13.2.0-binutils2.42-${{ runner.os }}
       - name: Build cross compiler
         if: steps.cross.outputs.cache-hit != 'true'
-        run: ./scripts/build-cross.sh
+        run: sh ./scripts/build-cross.sh
       - name: Add cross compiler to PATH
         run: echo "$HOME/opt/cross/bin" >> $GITHUB_PATH
 
