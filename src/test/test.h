@@ -23,7 +23,7 @@ void init_kmalloc_tests();
 
 #define register_test_case(test, name)                                          \
     TestCase* test_case_##test = kmalloc(sizeof(TestCase));                     \
-    *test_case_##test = (TestCase) {test, name, CATEGORY, sizeof(CATEGORY)};    \
+    *test_case_##test = (TestCase) {test, name, __FILE_NAME__, sizeof(__FILE_NAME__)};    \
     _register_test(test_case_##test);                                                   
 
 #define ASSERT(condition)   \

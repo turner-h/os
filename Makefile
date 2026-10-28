@@ -18,7 +18,19 @@ KERNEL_LD_SCRIPT= kernel.ld
 STAGE_2_LD_SCRIPT= stage_2.ld
 LD_FLAGS= -static -s
 
+QEMU_FLAGS = -drive file=$<,format=raw
+
+TEST_C_FLAGS = -DTEST
+TEST_QEMU_FLAGS = -display none -serial stdio -device isa-debug-exit,iobase=0xf4,iosize=0x04 -no-reboot
+
 all: dirs run
+
+test: C_FLAGS += ${TEST_C_FLAGS}
+test: QEMU_FLAGS += ${TEST_QEMU_FLAGS}
+test: dirs run
+
+test_build: C_FLAGS += ${TEST_C_FLAGS}
+test_build: dirs bin/image.bin
 
 dirs:
 	mkdir -p bin
@@ -55,4 +67,4 @@ bin/image.bin: bin/boot.bin bin/stage_2.bin bin/kernel.bin
 
 run: bin/image.bin
 	rm src/*/*.o
-	qemu-system-i386 -drive file=$<,format=raw
+	qemu-system-i386 ${QEMU_FLAGS}

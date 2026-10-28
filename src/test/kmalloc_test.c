@@ -1,8 +1,5 @@
 #include "../test/test.h"
 #include "../cpu/memory.h"
-#include "../drivers/vga.h"
-
-#define CATEGORY "kmalloc"
 
 TestResult test_free() {
     void* addr = kmalloc(sizeof(u32));

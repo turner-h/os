@@ -2,10 +2,9 @@
 #include "../cpu/memory.h"
 #include "../drivers/keyboard.h"
 #include "../drivers/vga.h"
-#include "../drivers/ata.h"
 #include "../kernel/fs.h"
-#include "../lib/util.h"
 #include "../test/test.h"
+#include "../cpu/port.h"
 
 void main() {
     clear_screen();
@@ -18,6 +17,13 @@ void main() {
 
     init_fs();
 
+#ifdef TEST
+    sprintf("\n== OS Unit Tests ==\n");
+
+    init_tests();
+    test_run_all();
+#endif
+
     u16* buffer = kmalloc(256 * sizeof(u16));
     fs_open("/test.txt", buffer);
 
@@ -29,7 +35,4 @@ void main() {
     kprintf("\n\n");
 
     kfree(buffer);
-
-    init_tests();
-    test_run_all();
 }
