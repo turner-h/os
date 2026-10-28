@@ -1,16 +1,29 @@
 # OS
+![GitHub top language](https://img.shields.io/github/languages/top/turner-h/os)
+![CI](https://github.com/turner-h/os/actions/workflows/ci.yml/badge.svg)
+![Repo Size](https://img.shields.io/github/repo-size/turner-h/os)
 
-A small operating system written in C
+A hobby operating system written in C
 
-TODO:
-- [x] paging
-- [X] page frame allocator
-- [x] detect size of usable memory
-- [x] update bootloader to load the kernel at 1Mb
-- [x] update bootloader to read fs
-- [x] new gdt
-- [x] heap for kernel via kmalloc
-- [x] move kernel to higher half (0xC0000000)
-- [x] kprintf with %d, %x, %s
-- [x] test suite
+
+### Features
+- Custom two-stage bootloader
+- Paging and virtual memory
+- Page frame allocator
+- Heap memory allocator
+- Interrupt handling
+- Unit testing
+
+### Next Steps:
 - [ ] finish fs implementation
+- [ ] load user programs
+
+### Usage
+```bash
+make - runs the os in QEMU
+make test - runs unit tests
+```
+
+### Dependencies
+- i386-elf cross compiler
+- mtools
