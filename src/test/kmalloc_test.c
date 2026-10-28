@@ -17,6 +17,8 @@ TestResult test_multiple_allocs() {
     TestCase* test = kmalloc(sizeof(TestCase));
     int* number2 = kmalloc(sizeof(int));
 
+    ASSERT(0);
+
     *number = 5;
     test->category_length = 5;
     *number2 = 4;
