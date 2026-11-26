@@ -4,6 +4,7 @@
 #include "../drivers/keyboard.h"
 #include "../drivers/vga.h"
 #include "../kernel/fs.h"
+#include "../cpu/port.h"
 #include "../test/test.h"
 
 void main() {
