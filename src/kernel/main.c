@@ -1,15 +1,16 @@
 #include "../cpu/isr.h"
 #include "../cpu/memory.h"
+#include "../cpu/timer.h"
 #include "../drivers/keyboard.h"
 #include "../drivers/vga.h"
 #include "../kernel/fs.h"
 #include "../test/test.h"
-#include "../cpu/port.h"
 
 void main() {
     clear_screen();
     kprintf("higher half kernel loaded\n");
     install_isrs();
+    init_pic(100);
     init_heap();
 
     asm volatile("sti");

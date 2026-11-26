@@ -14,9 +14,8 @@ A hobby operating system written in C
 - Interrupt handling
 - Unit testing
 
-### Next Steps:
-- [ ] finish fs implementation
-- [ ] load user programs
+### Next Steps
+See [PLANNING.md](./PLANNING.md)
 
 ### Usage
 ```bash
